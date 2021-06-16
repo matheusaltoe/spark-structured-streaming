@@ -21,9 +21,12 @@ initDF = (spark
   .option("port", port)
   .load())
 
+# UDF for case insensitive
+caseinsensitiveUDF = udf(lambda x: x.upper())
+
 #Dataframe printSchema
 wordCount = (initDF
-  .select(explode(split(col("value"), " ")).alias("words"))
+  .select(explode(split(caseinsensitiveUDF(col("value")), " ")).alias("words"))
   .groupBy("words")
   .count()
   )
